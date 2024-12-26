@@ -22,6 +22,6 @@ app.use('/api/transactions', transactionRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,async() => {
     mongoose.connect(process.env.DB_URI,);
-    console.log("database connected")
+    console.log("Database connected")
     console.log(`Server running on port ${PORT}`);
 });
