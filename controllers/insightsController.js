@@ -1,12 +1,15 @@
-const {Transaction} = require('../models/Transaction');
-const {Budget} = require('../models/Budget');
+const Transaction = require('../models/Transaction');
+const Budget = require('../models/Budget');
 
 exports.getFinancialSummary = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const {Id:userId} = req.user.id;
+      
 
         // Calculate total income and expenses
-        const transactions = await Transaction.find({ userId });
+        const transactions = await Transaction.find({ Id:userId });
+    
+
         const totalIncome = transactions
             .filter(t => t.amount > 0)
             .reduce((acc, t) => acc + t.amount, 0);
@@ -15,7 +18,7 @@ exports.getFinancialSummary = async (req, res) => {
             .reduce((acc, t) => acc + Math.abs(t.amount), 0);
 
         // Calculate remaining budget
-        const budgets = await Budget.find({ userId });
+        const budgets = await Budget.find({ Id:userId });
         const remainingBudget = budgets.reduce((acc, budget) => acc + budget.total_amount, 0) - totalExpenses;
 
         // Calculate top spending categories
@@ -37,14 +40,15 @@ exports.getFinancialSummary = async (req, res) => {
             topSpendingCategories
         });
     } catch (error) {
+       console.log(error)
         res.status(500).json({ message: 'Error fetching financial summary', error });
     }
 };
 
 exports.getMonthlyBreakdown = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const transactions = await Transaction.find({ userId }).sort({ createdAt: -1 });
+        const {Id:userId} = req.user.id;
+        const transactions = await Transaction.find({ Id:userId }).sort({ createdAt: -1 });
 
         const monthlyData = {};
 
